@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "timeCounterTCP.filetransfer";
+option java_outer_classname = "FileTransferProto";
+
+message FileInfo {
+  string filename = 1;
+  int64 size = 2;
+}
+
+message FileChunk {
+  bytes data = 1;
+}
