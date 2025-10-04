@@ -1,7 +1,6 @@
 package timeCounterTCP;
 
-import timeCounterTCP.filetransfer.FileTransferProto.FileInfo;
-import timeCounterTCP.filetransfer.FileTransferProto.FileChunk;
+import timeCounterTCP.filetransfer.FileTransferProto.*;
 import java.io.*;
 import java.net.*;
 
@@ -53,9 +52,12 @@ public class Client {
                 dos.flush();
             }
 
-            String response = dis.readUTF();
-            if ("OK".equals(response)) {
-                System.out.println("Передача файла успешно завершена.");
+            int responseLength = dis.readInt();
+            byte[] responseBytes = new byte[responseLength];
+            dis.readFully(responseBytes);
+            FileResponse response = FileResponse.parseFrom(responseBytes);
+            if ("OK".equals(response.getStatus())) {
+                System.out.println("Передача файла успешно завершена\nФайл сохранен как: " + response.getSavedFilename());
             } else {
                 System.out.println("Передача файла не удалась.");
             }

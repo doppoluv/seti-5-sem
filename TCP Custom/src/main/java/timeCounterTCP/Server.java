@@ -1,7 +1,6 @@
 package timeCounterTCP;
 
-import timeCounterTCP.filetransfer.FileTransferProto.FileInfo;
-import timeCounterTCP.filetransfer.FileTransferProto.FileChunk;
+import timeCounterTCP.filetransfer.FileTransferProto.*;
 import java.io.*;
 import java.net.*;
 
@@ -36,6 +35,33 @@ public class Server {
             this.socket = socket;
             this.uploadsDir = uploadsDir;
         }
+        
+        private String getUniqueFilename(String filename, File uploadsDir) {
+            File file = new File(uploadsDir, filename);
+            if (!file.exists()) {
+                return filename;
+            }
+
+            String nameWithoutExtension;
+            String extension = "";
+            int lastDotIndex = filename.lastIndexOf('.');
+            if (lastDotIndex > 0 && lastDotIndex < filename.length() - 1) {
+                nameWithoutExtension = filename.substring(0, lastDotIndex);
+                extension = filename.substring(lastDotIndex);
+            } else {
+                nameWithoutExtension = filename;
+            }
+
+            int counter = 1;
+            String newFilename = filename;
+            while (file.exists()) {
+                newFilename = String.format("%s(%d)%s", nameWithoutExtension, counter, extension);
+                file = new File(uploadsDir, newFilename);
+                counter++;
+            }
+
+            return newFilename;
+        }
 
         @Override
         public void run() {
@@ -51,7 +77,8 @@ public class Server {
                 long fileSize = fileInfo.getSize();
 
                 String safeFilename = new File(filename).getName();
-                File destFile = new File(uploadsDir, safeFilename);
+                String uniqueFilename = getUniqueFilename(safeFilename, uploadsDir);
+                File destFile = new File(uploadsDir, uniqueFilename);
 
                 try (FileOutputStream fos = new FileOutputStream(destFile)) {
                     long totalBytes = 0;
@@ -85,18 +112,25 @@ public class Server {
 
                     long endTime = System.currentTimeMillis();
                     double totalTimeSec = (endTime - startTime) / 1000.0;
-                    double speed = totalTimeSec > 0 ? totalBytes / totalTimeSec / 1024.0 / 1024.0 : totalBytes / 1024.0 / 1024.0;
+                    double speed = totalBytes / totalTimeSec / 1024.0 / 1024.0;
+                    // System.out.println(totalTimeSec);
                     if (!printed) {
                         System.out.printf("Клиент %s:\n     Мгновенная скорость: %.2f МБ/с     Средняя скорость: %.2f МБ/с%n",
                                           clientAddress, speed, speed);
                     }
 
+                    FileResponse.Builder responseBuilder = FileResponse.newBuilder();
                     if (totalBytes == fileSize) {
-                        dos.writeUTF("OK");
+                        responseBuilder.setStatus("OK").setSavedFilename(uniqueFilename);
                     } else {
-                        dos.writeUTF("ERROR");
+                        responseBuilder.setStatus("ERROR").setSavedFilename("");
                         destFile.delete();
                     }
+                    FileResponse response = responseBuilder.build();
+                    byte[] responseBytes = response.toByteArray();
+                    dos.writeInt(responseBytes.length);
+                    dos.write(responseBytes);
+                    dos.flush();
                 }
             } catch (IOException e) {
                 System.err.println("Ошибка обработки клиента " + clientAddress + ": " + e.getMessage());

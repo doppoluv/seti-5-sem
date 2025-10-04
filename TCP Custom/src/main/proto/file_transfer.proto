@@ -11,3 +11,8 @@ message FileInfo {
 message FileChunk {
   bytes data = 1;
 }
+
+message FileResponse {
+  string status = 1;
+  string savedFilename = 2;
+}
