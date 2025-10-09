@@ -23,7 +23,7 @@ public class Main {
                 Location[] locations = response.getHits();
                 if (locations != null && locations.length > 0) {
                     LocationController.printLocations(locations);
-                    LocationController.choseLocation(locations, scanner);
+                    LocationController.chooseLocation(locations, scanner);
                 } else {
                     System.out.println("Локации не найдены");
                 }

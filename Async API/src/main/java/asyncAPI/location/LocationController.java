@@ -48,7 +48,7 @@ public class LocationController {
         }
     }
 
-    public static void choseLocation(Location[] locations, Scanner scanner) {
+    public static void chooseLocation(Location[] locations, Scanner scanner) {
         while (!chosen) {
             System.out.print("Введите номер выбранной локации: ");
             int locationIndex = scanner.nextInt();
