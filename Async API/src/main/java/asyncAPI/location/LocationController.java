@@ -1,6 +1,8 @@
 package asyncAPI.location;
 
+import asyncAPI.location.LocationResponse.Location;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import com.google.gson.Gson;
 import okhttp3.*;
@@ -8,6 +10,9 @@ import okhttp3.*;
 public class LocationController {
     private static final OkHttpClient client = new OkHttpClient();
     private static final Gson gson = new Gson();
+
+    private static Location chosenLocation = new Location();
+    private static boolean chosen = false;
 
     public static CompletableFuture<LocationResponse> getLocations(String location) {
         Request request = LocationRequest.getLocations(location);
@@ -21,8 +26,6 @@ public class LocationController {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                // System.out.println("Код ответа: " + response.code());
-                // System.out.println("uri: " + response.request().url());
                 if (!response.isSuccessful()) {
                     future.completeExceptionally(new IOException("Неожиданный ответ: " + response));
                     return;
@@ -34,5 +37,28 @@ public class LocationController {
         });
 
         return future;
+    }
+
+    public static void printLocations(Location[] locations) {
+        System.out.println("Найденные локации: ");
+        for (int i = 0; i < locations.length; i++) {
+            Location loc = locations[i];
+            System.out.print("[" + (i + 1) + "] ");
+            System.out.println(loc);
+        }
+    }
+
+    public static void choseLocation(Location[] locations, Scanner scanner) {
+        while (!chosen) {
+            System.out.print("Введите номер выбранной локации: ");
+            int locationIndex = scanner.nextInt();
+            if (locationIndex < 1 || locationIndex > locations.length) {
+                System.err.println("Неправильно набран номер");
+            } else {
+                chosenLocation = locations[locationIndex - 1];
+                System.out.println("Выбранная локация: " + chosenLocation);
+                chosen = true;
+            }
+        }
     }
 }
