@@ -21,16 +21,26 @@ public class Main {
             CompletableFuture<LocationResponse> locFuture = LocationController.getLocations(location);
             locFuture.thenApply(response -> {
                 Location[] locations = response.getHits();
-                if (locations != null && locations.length > 0) {
-                    LocationController.printLocations(locations);
-                    LocationController.chooseLocation(locations, scanner);
-                } else {
+                if (locations == null || locations.length == 0) {
                     System.out.println("Локации не найдены");
+                    return CompletableFuture.completedFuture(null);
                 }
-                return null;
+
+                LocationController.printLocations(locations);
+
+                Location chosenLocation = LocationController.chooseLocation(locations, scanner);
+                if (chosenLocation == null) {
+                    System.err.println("Ошибка с выбором локации");
+                    return CompletableFuture.completedFuture(null);
+                }
+
+
+                return CompletableFuture.completedFuture(chosenLocation);
             }).exceptionally(ex -> {
                 System.err.println("Ошибка: " + ex.getMessage());
-                return null;
+                return CompletableFuture.completedFuture(null);
+            }).whenComplete((_, _) -> {
+                System.exit(1);
             }).join();
         }
     }

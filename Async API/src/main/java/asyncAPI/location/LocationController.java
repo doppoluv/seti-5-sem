@@ -11,13 +11,11 @@ public class LocationController {
     private static final OkHttpClient client = new OkHttpClient();
     private static final Gson gson = new Gson();
 
-    private static Location chosenLocation = new Location();
     private static boolean chosen = false;
 
     public static CompletableFuture<LocationResponse> getLocations(String location) {
         Request request = LocationRequest.getLocations(location);
         CompletableFuture<LocationResponse> future = new CompletableFuture<>();
-
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -48,17 +46,18 @@ public class LocationController {
         }
     }
 
-    public static void chooseLocation(Location[] locations, Scanner scanner) {
+    public static Location chooseLocation(Location[] locations, Scanner scanner) {
         while (!chosen) {
             System.out.print("Введите номер выбранной локации: ");
             int locationIndex = scanner.nextInt();
             if (locationIndex < 1 || locationIndex > locations.length) {
                 System.err.println("Неправильно набран номер");
             } else {
-                chosenLocation = locations[locationIndex - 1];
-                System.out.println("Выбранная локация: " + chosenLocation);
                 chosen = true;
+                return locations[locationIndex - 1];
             }
         }
+
+        return null;
     }
 }
