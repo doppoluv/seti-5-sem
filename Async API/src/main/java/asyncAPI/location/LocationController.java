@@ -16,6 +16,7 @@ public class LocationController {
     public static CompletableFuture<LocationResponse> getLocations(String location) {
         Request request = LocationRequest.getLocations(location);
         CompletableFuture<LocationResponse> future = new CompletableFuture<>();
+
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
