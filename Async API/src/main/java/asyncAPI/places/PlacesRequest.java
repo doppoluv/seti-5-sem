@@ -1,11 +1,12 @@
 package asyncAPI.places;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Request;
 
 public class PlacesRequest {
     public static String baseUrl = "http://api.opentripmap.com/0.1/ru/places/radius";
     public static String descUrl = "http://api.opentripmap.com/0.1/ru/places/xid/";
-    public static String apikey = "-";
+    private static final String apikey = Dotenv.load().get("PLACES_API");
 
     public static Request getPlaces(double lat, double lon) {
         String uri = baseUrl + "?radius=10000&lon=" + lon + "&lat=" + lat + "&format=json&limit=3&apikey=" + apikey;

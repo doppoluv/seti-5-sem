@@ -3,14 +3,9 @@ package asyncAPI.places;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-
 import com.google.gson.Gson;
-
 import asyncAPI.places.PlacesResponse.Places;
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 
 public class PlacesController {
     private static final OkHttpClient client = new OkHttpClient();

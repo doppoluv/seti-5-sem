@@ -2,11 +2,12 @@ package asyncAPI.location;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.*;
 
 public class LocationRequest {
     private static final String url = "https://graphhopper.com/api/1/geocode";
-    private static final String apikey = "-";
+    private static final String apikey = Dotenv.load().get("LOCATION_API");
 
     public static Request getLocations(String location) {
         String encodedLocation = URLEncoder.encode(location, StandardCharsets.UTF_8);

@@ -4,6 +4,7 @@ uploads/
 .idea
 test/
 resources/
+.env
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
