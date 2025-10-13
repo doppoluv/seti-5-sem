@@ -8,7 +8,7 @@ public class PlacesRequest {
     public static String apikey = "-";
 
     public static Request getPlaces(double lat, double lon) {
-        String uri = baseUrl + "?radius=10000&lon=" + lon + "&lat=" + lat + "&format=json&limit=10&apikey=" + apikey;
+        String uri = baseUrl + "?radius=10000&lon=" + lon + "&lat=" + lat + "&format=json&limit=3&apikey=" + apikey;
         Request request = new Request.Builder().url(uri).get().build();
         return request;
     }
