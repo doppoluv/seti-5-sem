@@ -3,6 +3,9 @@ package asyncAPI;
 import asyncAPI.location.LocationController;
 import asyncAPI.location.LocationResponse;
 import asyncAPI.location.LocationResponse.Location;
+import asyncAPI.model.Result;
+import asyncAPI.places.PlacesController;
+import asyncAPI.places.PlacesResponse;
 import asyncAPI.weather.WeatherController;
 import asyncAPI.weather.WeatherResponse;
 
@@ -22,7 +25,7 @@ public class Main {
             }
 
             CompletableFuture<LocationResponse> locFuture = LocationController.getLocations(location);
-            locFuture.thenApply(response -> {
+            locFuture.thenCompose(response -> {
                 Location[] locations = response.getHits();
                 if (locations == null || locations.length == 0) {
                     System.out.println("Локации не найдены");
@@ -39,13 +42,43 @@ public class Main {
 
                 CompletableFuture<WeatherResponse> weatherFuture = WeatherController.getWeather(
                     chosenLocation.getPoint().getLatitude(), chosenLocation.getPoint().getLongitude());
-                
-                return CompletableFuture.completedFuture(chosenLocation);
+                CompletableFuture<PlacesResponse> placesFuture = PlacesController.getPlaces(
+                        chosenLocation.getPoint().getLatitude(), chosenLocation.getPoint().getLongitude());
+
+                return CompletableFuture.allOf(weatherFuture, placesFuture)
+                        .thenCompose(_ -> {
+                            WeatherResponse weather = weatherFuture.join();
+                            PlacesResponse places = placesFuture.join();
+                            PlacesResponse.Places[] placeArray = places != null ? places.getFeatures() : new PlacesResponse.Places[0];
+                            return CompletableFuture.completedFuture(new Result(chosenLocation, weather, placeArray));
+                        });
             }).exceptionally(ex -> {
                 System.err.println("Ошибка: " + ex.getMessage());
-                return CompletableFuture.completedFuture(null);
-            }).whenComplete((_, _) -> {
                 System.exit(1);
+                return null;
+            }).whenComplete((result, _) -> {
+                if (result != null) {
+                    System.out.println("\nИтоговый результат:");
+                    System.out.println("- Локация: " + result.getSelectedLocation());
+                    System.out.println("- Погода: " + (result.getWeather() != null && 
+                            result.getWeather().getWeather().length > 0 ?
+                            result.getWeather().getMain().getTemperature() + "°C, " +
+                            result.getWeather().getWeather()[0].getDescription() : "Нет данных"));
+                    
+                    System.out.println("- Интересные места: ");
+                    if (result.getPlaces().length == 0) {
+                        System.out.println("    Нет информации по интересным местам");
+                    } else {
+                        int placesCount = 1;
+                        for (PlacesResponse.Places place : result.getPlaces()) {
+                            System.out.println("[" + placesCount + "] " + place.getName() + ": " + place.getDescription());
+                            placesCount++;
+                        }
+                    }
+                }
+
+                System.out.println("\nПрограмма завершена.");
+                System.exit(0);
             }).join();
         }
     }
