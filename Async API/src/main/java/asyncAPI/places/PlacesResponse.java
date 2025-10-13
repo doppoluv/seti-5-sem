@@ -8,7 +8,7 @@ public class PlacesResponse {
     }
 
     public Places[] getFeatures() {
-        return features != null ? features : new Places[0];
+        return features;
     }
     
 

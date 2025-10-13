@@ -49,7 +49,7 @@ public class Main {
                         .thenCompose(_ -> {
                             WeatherResponse weather = weatherFuture.join();
                             PlacesResponse places = placesFuture.join();
-                            PlacesResponse.Places[] placeArray = places != null ? places.getFeatures() : new PlacesResponse.Places[0];
+                            PlacesResponse.Places[] placeArray = places.getFeatures();
                             return CompletableFuture.completedFuture(new Result(chosenLocation, weather, placeArray));
                         });
             }).exceptionally(ex -> {
@@ -71,6 +71,9 @@ public class Main {
                     } else {
                         int placesCount = 1;
                         for (PlacesResponse.Places place : result.getPlaces()) {
+                            if (place.getName().isEmpty()) {
+                                continue;
+                            }
                             System.out.println("[" + placesCount + "] " + place.getName() + ": " + place.getDescription());
                             placesCount++;
                         }

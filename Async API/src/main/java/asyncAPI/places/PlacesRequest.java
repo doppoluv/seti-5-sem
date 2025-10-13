@@ -9,7 +9,7 @@ public class PlacesRequest {
     private static final String apikey = Dotenv.load().get("PLACES_API");
 
     public static Request getPlaces(double lat, double lon) {
-        String uri = baseUrl + "?radius=10000&lon=" + lon + "&lat=" + lat + "&format=json&limit=3&apikey=" + apikey;
+        String uri = baseUrl + "?radius=10000&lon=" + lon + "&lat=" + lat + "&format=json&limit=5&apikey=" + apikey;
         Request request = new Request.Builder().url(uri).get().build();
         return request;
     }
