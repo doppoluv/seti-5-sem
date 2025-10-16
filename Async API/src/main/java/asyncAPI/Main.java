@@ -82,7 +82,7 @@ public class Main {
                         placesCount++;
                     }
                     if (placesCount == 1) {
-                        System.out.println("    Нет информации по интересным местам");
+                        System.out.println("\n  Нет информации по интересным местам");
                     }
                 }
 
