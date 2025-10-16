@@ -3,6 +3,7 @@ package asyncAPI;
 import asyncAPI.location.LocationController;
 import asyncAPI.location.LocationResponse;
 import asyncAPI.location.LocationResponse.Location;
+import asyncAPI.model.Clear;
 import asyncAPI.model.Result;
 import asyncAPI.places.PlacesController;
 import asyncAPI.places.PlacesResponse;
@@ -17,6 +18,7 @@ public class Main {
     public static void main(String[] args) {
         System.setProperty("file.encoding", "UTF-8");
         try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
+            Clear.clearTerminal();
             System.out.print("Введите название: ");
             String location = scanner.nextLine();
             if (location.isEmpty()) {
@@ -58,7 +60,8 @@ public class Main {
                 return null;
             }).whenComplete((result, _) -> {
                 if (result != null) {
-                    System.out.println("\nИтоговый результат:");
+                    Clear.clearTerminal();
+                    System.out.println("Итоговый результат:");
                     System.out.println("- Локация: " + result.getSelectedLocation());
                     System.out.println("- Погода: " + (result.getWeather() != null && 
                             result.getWeather().getWeather().length > 0 ?
