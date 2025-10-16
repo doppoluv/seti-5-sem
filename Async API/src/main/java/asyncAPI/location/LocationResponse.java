@@ -38,7 +38,7 @@ public class LocationResponse {
 
         @Override
         public String toString() {
-            return "name='" + name + "',  country='" + country + "',  osmValue='" + osmValue + "'";
+            return name + " (Страна = " + country + ",  Тип = " + osmValue + ")";
         }
     }
 

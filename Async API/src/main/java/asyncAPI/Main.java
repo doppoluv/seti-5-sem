@@ -9,6 +9,7 @@ import asyncAPI.places.PlacesController;
 import asyncAPI.places.PlacesResponse;
 import asyncAPI.weather.WeatherController;
 import asyncAPI.weather.WeatherResponse;
+import asyncAPI.model.HtmlUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -61,20 +62,23 @@ public class Main {
             }).whenComplete((result, _) -> {
                 if (result != null) {
                     Clear.clearTerminal();
-                    System.out.println("Итоговый результат:");
-                    System.out.println("- Локация: " + result.getSelectedLocation());
-                    System.out.println("- Погода: " + (result.getWeather() != null && 
+                    System.out.println("---------------------------------------------------");
+                    System.out.println("                Итоговый результат");
+                    System.out.println("---------------------------------------------------");
+                    System.out.println("\n- Локация: " + result.getSelectedLocation());
+                    System.out.println("\n- Погода: " + (result.getWeather() != null && 
                             result.getWeather().getWeather().length > 0 ?
                             result.getWeather().getMain().getTemperature() + "°C, " +
                             result.getWeather().getWeather()[0].getDescription() : "Нет данных о погоде"));
                     
-                    System.out.println("- Интересные места: ");
+                    System.out.print("\n- Интересные места:");
                     int placesCount = 1;
                     for (PlacesResponse.Places place : result.getPlaces()) {
                         if (place.getName().isEmpty()) {
                             continue;
                         }
-                        System.out.println("[" + placesCount + "] " + place.getName() + ": " + place.getDescription());
+                        System.out.print("\n[" + placesCount + "] " + place.getName() + ":\n  ");
+                        System.out.println(HtmlUtils.formatDescription(place.getDescription()));
                         placesCount++;
                     }
                     if (placesCount == 1) {
@@ -82,7 +86,6 @@ public class Main {
                     }
                 }
 
-                System.out.println("\nПрограмма завершена.");
                 System.exit(0);
             }).join();
         }
