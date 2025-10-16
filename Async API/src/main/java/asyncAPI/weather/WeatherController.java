@@ -24,6 +24,7 @@ public class WeatherController {
                     future.completeExceptionally(new IOException("Неожиданный ответ: " + response));
                     return;
                 }
+                
                 String responseBody = response.body().string();
                 WeatherResponse weatherResponse = gson.fromJson(responseBody, WeatherResponse.class);
                 future.complete(weatherResponse);

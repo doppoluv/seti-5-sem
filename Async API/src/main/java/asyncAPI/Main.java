@@ -63,20 +63,19 @@ public class Main {
                     System.out.println("- Погода: " + (result.getWeather() != null && 
                             result.getWeather().getWeather().length > 0 ?
                             result.getWeather().getMain().getTemperature() + "°C, " +
-                            result.getWeather().getWeather()[0].getDescription() : "Нет данных"));
+                            result.getWeather().getWeather()[0].getDescription() : "Нет данных о погоде"));
                     
                     System.out.println("- Интересные места: ");
-                    if (result.getPlaces().length == 0) {
-                        System.out.println("    Нет информации по интересным местам");
-                    } else {
-                        int placesCount = 1;
-                        for (PlacesResponse.Places place : result.getPlaces()) {
-                            if (place.getName().isEmpty()) {
-                                continue;
-                            }
-                            System.out.println("[" + placesCount + "] " + place.getName() + ": " + place.getDescription());
-                            placesCount++;
+                    int placesCount = 1;
+                    for (PlacesResponse.Places place : result.getPlaces()) {
+                        if (place.getName().isEmpty()) {
+                            continue;
                         }
+                        System.out.println("[" + placesCount + "] " + place.getName() + ": " + place.getDescription());
+                        placesCount++;
+                    }
+                    if (placesCount == 1) {
+                        System.out.println("    Нет информации по интересным местам");
                     }
                 }
 

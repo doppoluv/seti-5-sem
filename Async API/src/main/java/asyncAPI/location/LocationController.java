@@ -29,6 +29,7 @@ public class LocationController {
                     future.completeExceptionally(new IOException("Неожиданный ответ: " + response));
                     return;
                 }
+                
                 String responseBody = response.body().string();
                 LocationResponse locationResponse = gson.fromJson(responseBody, LocationResponse.class);
                 future.complete(locationResponse);
