@@ -29,12 +29,25 @@ public class PlacesController {
                 }
 
                 String responseBody = response.body().string();
-                Places[] places = gson.fromJson(responseBody, Places[].class);
+                PlacesResponse placesResponse = gson.fromJson(responseBody, PlacesResponse.class);
+                Places[] places = placesResponse.getFeatures();
+                
+                if (places == null || places.length == 0) {
+                    future.complete(new PlacesResponse(new Places[0]));
+                    return;
+                }
+
                 @SuppressWarnings("unchecked")
                 CompletableFuture<Places>[] descFutures = Arrays.stream(places)
+                    .filter(place -> place.getXid() != null)
                     .map(place -> getPlacesDesc(place.getXid())
                     .thenApply(desc -> {
-                        place.setDescription(desc != null && desc.getInfo() != null ? desc.getInfo().getDescription() : "");
+                        String description = desc != null && desc.getInfo() != null ? 
+                            desc.getInfo().getDescription() : "";
+                        place.setDescription(description);
+                        return place;
+                    }).exceptionally(_ -> {
+                        place.setDescription("");
                         return place;
                     })).toArray(CompletableFuture[]::new);
 

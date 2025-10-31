@@ -9,7 +9,6 @@ import asyncAPI.places.PlacesController;
 import asyncAPI.places.PlacesResponse;
 import asyncAPI.weather.WeatherController;
 import asyncAPI.weather.WeatherResponse;
-import asyncAPI.model.HtmlUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -78,7 +77,7 @@ public class Main {
                             continue;
                         }
                         System.out.print("\n[" + placesCount + "] " + place.getName() + ":\n  ");
-                        System.out.println(HtmlUtils.formatDescription(place.getDescription()));
+                        System.out.println(place.getDescription());
                         placesCount++;
                     }
                     if (placesCount == 1) {

@@ -1,6 +1,9 @@
 package asyncAPI.places;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PlacesResponse {
+    @SerializedName("features")
     private Places[] features;
 
     public PlacesResponse(Places[] features) {
@@ -8,29 +11,50 @@ public class PlacesResponse {
     }
 
     public Places[] getFeatures() {
-        return features;
+        return features != null ? features : new Places[0];
     }
     
 
     public static class Places {
-        private String xid;
-        private String name;
+        @SerializedName("properties")
+        private Properties properties;
+
         private String description;
 
         public String getXid() {
-            return xid;
+            return properties != null ? properties.getPlaceId() : null;
         }
 
         public String getName() {
+            if (properties == null) {
+                return "Без названия";
+            }
+            String name = properties.getName();
             return name != null ? name : "Без названия";
         }
 
         public String getDescription() {
-            return description != "" ? description : "Нет описания";
+            return description != null && !description.isEmpty() ? description : "Нет описания";
         }
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public static class Properties {
+            @SerializedName("place_id")
+            private String placeId;
+            
+            @SerializedName("name")
+            private String name;
+
+            public String getPlaceId() {
+                return placeId;
+            }
+
+            public String getName() {
+                return name;
+            }
         }
     }
 }

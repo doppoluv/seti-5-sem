@@ -4,18 +4,19 @@ import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.Request;
 
 public class PlacesRequest {
-    public static String baseUrl = "http://api.opentripmap.com/0.1/ru/places/radius";
-    public static String descUrl = "http://api.opentripmap.com/0.1/ru/places/xid/";
+    public static String baseUrl = "https://api.geoapify.com/v2/places";
+    public static String detailsUrl = "https://api.geoapify.com/v2/place-details";
     private static final String apikey = Dotenv.load().get("PLACES_API");
 
     public static Request getPlaces(double lat, double lon) {
-        String uri = baseUrl + "?radius=10000&lon=" + lon + "&lat=" + lat + "&format=json&limit=5&apikey=" + apikey;
+        String uri = baseUrl + "?categories=tourism.sights,tourism.attraction,entertainment,leisure"
+                             + "&filter=circle:" + lon + "," + lat + ",10000" + "&limit=5" + "&apiKey=" + apikey;
         Request request = new Request.Builder().url(uri).get().build();
         return request;
     }
 
-    public static Request getPlacesDesc(String xid) {
-        String uri = descUrl + xid + "?apikey=" + apikey;
+    public static Request getPlacesDesc(String placeId) {
+        String uri = detailsUrl + "?id=" + placeId + "&apiKey=" + apikey;
         Request request = new Request.Builder().url(uri).get().build();
         return request;
     }
