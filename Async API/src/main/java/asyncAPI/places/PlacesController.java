@@ -42,8 +42,7 @@ public class PlacesController {
                     .filter(place -> place.getXid() != null)
                     .map(place -> getPlacesDesc(place.getXid())
                     .thenApply(desc -> {
-                        String description = desc != null && desc.getInfo() != null ? 
-                            desc.getInfo().getDescription() : "";
+                        String description = desc != null && desc.getInfo() != null ? desc.getInfo().getDescription() : "";
                         place.setDescription(description);
                         return place;
                     }).exceptionally(_ -> {
