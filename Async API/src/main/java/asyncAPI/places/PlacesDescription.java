@@ -53,11 +53,11 @@ public class PlacesDescription {
         }
 
         public String getDescription() {
-            if (properties == null) return "";
-            
-            if (properties.datasource != null && 
-                properties.datasource.raw != null && 
-                properties.datasource.raw.description != null) {
+            if (properties == null) {
+                return "";
+            }
+
+            if (properties.datasource != null && properties.datasource.raw != null && properties.datasource.raw.description != null) {
                 return properties.datasource.raw.description;
             }
             
