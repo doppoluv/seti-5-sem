@@ -38,9 +38,6 @@ public class PlacesDescription {
     }
 
     public static class Raw {
-        @SerializedName("wikipedia")
-        private String wikipedia;
-
         @SerializedName("description")
         private String description;
     }
