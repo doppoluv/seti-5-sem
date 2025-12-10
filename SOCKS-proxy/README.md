@@ -19,6 +19,8 @@
 
 ### Описание протокола:
 
-На английской Википедии: https://en.wikipedia.org/wiki/SOCKS
-SOCKS 5 RFC: https://www.ietf.org/rfc/rfc1928.txt
-SOCKS для самых маленьких: http://fit.ippolitov.me/CN_2/2025/socks.jpg
+[1] На английской Википедии: https://en.wikipedia.org/wiki/SOCKS
+
+[2] SOCKS 5 RFC: https://www.ietf.org/rfc/rfc1928.txt
+
+[3] SOCKS для самых маленьких: http://fit.ippolitov.me/CN_2/2025/socks.jpg
