@@ -67,8 +67,9 @@ public class DNSResolver {
     }
 
     private void parseDnsResponse(ByteBuffer response) throws IOException {
-        if (response.remaining() < 12)
+        if (response.remaining() < 12) {
             return;
+        }
 
         int txId = response.getShort() & 0xFFFF;
         ClientConnection conn = pendingRequests.remove(txId);
@@ -97,8 +98,7 @@ public class DNSResolver {
             if (type == 1 && rdLength == 4) {
                 byte[] addr = new byte[4];
                 response.get(addr);
-                ip = String.format("%d.%d.%d.%d",
-                        addr[0] & 0xFF, addr[1] & 0xFF, addr[2] & 0xFF, addr[3] & 0xFF);
+                ip = String.format("%d.%d.%d.%d", addr[0] & 0xFF, addr[1] & 0xFF, addr[2] & 0xFF, addr[3] & 0xFF);
                 System.out.println("Resolved " + conn.targetHost + " to " + ip);
                 break;
             } else {
@@ -125,8 +125,9 @@ public class DNSResolver {
     private void skipName(ByteBuffer buffer) {
         while (buffer.hasRemaining()) {
             int len = buffer.get() & 0xFF;
-            if (len == 0)
+            if (len == 0) {
                 break;
+            }
             if ((len & 0xC0) == 0xC0) {
                 buffer.get();
                 break;

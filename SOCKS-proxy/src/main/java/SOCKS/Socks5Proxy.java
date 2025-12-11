@@ -35,8 +35,9 @@ public class Socks5Proxy {
                 SelectionKey key = iterator.next();
                 iterator.remove();
 
-                if (!key.isValid())
+                if (!key.isValid()) {
                     continue;
+                }
 
                 try {
                     if (key.isAcceptable()) {
@@ -76,8 +77,9 @@ public class Socks5Proxy {
         SocketChannel channel = (SocketChannel) key.channel();
         ClientConnection conn = connections.get(channel);
 
-        if (conn == null)
+        if (conn == null) {
             return;
+        }
 
         try {
             if (channel.finishConnect()) {
@@ -98,8 +100,9 @@ public class Socks5Proxy {
         SocketChannel channel = (SocketChannel) key.channel();
         ClientConnection conn = connections.get(channel);
 
-        if (conn == null)
+        if (conn == null) {
             return;
+        }
 
         if (channel == conn.clientChannel) {
             handleClientRead(conn);
@@ -117,8 +120,9 @@ public class Socks5Proxy {
             return;
         }
 
-        if (bytesRead == 0)
+        if (bytesRead == 0) {
             return;
+        }
 
         switch (conn.state) {
             case GREETING:
@@ -167,16 +171,18 @@ public class Socks5Proxy {
         SocketChannel channel = (SocketChannel) key.channel();
         ClientConnection conn = connections.get(channel);
 
-        if (conn == null)
+        if (conn == null) {
             return;
+        }
 
         key.interestOps(SelectionKey.OP_READ);
     }
 
     private boolean processGreeting(ClientConnection conn) throws IOException {
         ByteBuffer buf = conn.clientToRemoteBuffer;
-        if (buf.position() < 2)
+        if (buf.position() < 2) {
             return false;
+        }
 
         buf.flip();
         byte version = buf.get();
@@ -210,8 +216,9 @@ public class Socks5Proxy {
 
     private boolean processRequest(ClientConnection conn) throws IOException {
         ByteBuffer buf = conn.clientToRemoteBuffer;
-        if (buf.position() < 4)
+        if (buf.position() < 4) {
             return false;
+        }
 
         buf.flip();
         byte version = buf.get();
@@ -251,7 +258,6 @@ public class Socks5Proxy {
                 System.out.println("Request: IPv4 " + host + ":" + port);
                 connectToRemote(conn, host, port);
                 return true;
-
             } else if (addrType == 3) {
                 if (buf.remaining() < 1) {
                     buf.rewind();
@@ -276,7 +282,6 @@ public class Socks5Proxy {
                 conn.state = ConnectionState.RESOLVING;
                 dnsResolver.resolve(host, conn);
                 return true;
-
             } else {
                 System.err.println("Unsupported address type: " + addrType);
                 sendErrorResponse(conn, (byte) 8);
@@ -313,7 +318,6 @@ public class Socks5Proxy {
                 conn.state = ConnectionState.CONNECTING;
                 remoteChannel.register(selector, SelectionKey.OP_CONNECT);
             }
-
         } catch (IOException e) {
             System.err.println("Failed to connect to " + host + ":" + port + " - " + e.getMessage());
             sendErrorResponse(conn, (byte) 5);
